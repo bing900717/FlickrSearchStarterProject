@@ -6,9 +6,10 @@
 #import "RWTSearchResultsViewController.h"
 #import <ReactiveCocoa/ReactiveCocoa.h>
 #import "CETableViewBindingHelper.h"
+#import "RWTSearchResultsTableViewCell.h"
 
 
-@interface RWTSearchResultsViewController ()<UITableViewDataSource>
+@interface RWTSearchResultsViewController ()<UITableViewDataSource,UITableViewDelegate>
 
 @property (weak, nonatomic) IBOutlet UITableView *searchResultsTable;
 
@@ -47,24 +48,15 @@
                                            sourceSignal:RACObserve(self.viewModel, searchResults)
                                        selectionCommand:nil
                                            templateCell:nib];
-    
+    self.bindingHelper.delegate = self;
 }
 
 #pragma mark - UITableViewDelegate, UITableViewDataSource
-//- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
-//{
-//    return 1;
-//}
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     return self.viewModel.searchResults.count;
 }
-
-//- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
-//{
-//    return 44;
-//}
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -73,11 +65,14 @@
     return cell;
 }
 
-//- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-//{
-//    
-//}
-
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+    NSArray *cells = [self.searchResultsTable visibleCells];
+    [cells enumerateObjectsUsingBlock:^(RWTSearchResultsTableViewCell *  _Nonnull cell, NSUInteger idx, BOOL * _Nonnull stop) {
+        CGFloat value = -40 + (cell.frame.origin.y - self.searchResultsTable.contentOffset.y)/5;
+        [cell setParallax:value];
+    }];
+}
 
 
 @end

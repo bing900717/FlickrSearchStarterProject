@@ -30,4 +30,13 @@
 
 }
 
+- (void)setParallax:(CGFloat)value
+{
+    self.imageThumbnailView.transform = CGAffineTransformMakeTranslation(0, value);
+}
+
+
+
+
+
 @end
